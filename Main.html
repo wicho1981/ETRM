@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Main</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #header img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        #container-monthly, #container-daily {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        /* Botón Ir a Detalle */
+        #button-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        .button {
+            background-color: #2f7ed8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #1c5cab;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <img src="logo-enersinc-min.png" alt="Enersinc Logo">
+</div>
+
+<div id="container-monthly" style="height: 400px;"></div>
+<div id="container-daily" style="height: 400px;"></div>
+
+<div id="button-container">
+    <button class="button" onclick="window.location.href='detalle.html'">Ir a Detalle</button>
+</div>
+
+<script>
+    // Función para generar datos aleatorios
+    function generateRandomData(days, baseValue, variance) {
+        return Array.from({ length: days }, () => {
+            let value = baseValue + (Math.random() * variance - variance / 2);
+            return parseFloat(value.toFixed(2));
+        });
+    }
+
+    // Datos para la gráfica
+    const dailyDataByMonth = {
+        'enero': { calculado: generateRandomData(31, 0.3, 0.1), xm: generateRandomData(31, 0.32, 0.1) },
+        // Añadir datos para los otros meses...
+    };
+
+    // Gráfica mensual
+    Highcharts.chart('container-monthly', {
+        chart: { type: 'line' },
+        title: { text: 'VALOR CALCULADO VS VALOR XM (Mensual)' },
+        xAxis: { categories: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre'], title: { text: 'MES' } },
+        yAxis: { title: { text: 'TOTAL GARANTÍA DEL AGENTE' }, labels: { format: '{value} bill.' } },
+        series: [{ name: 'v.calculado', data: generateRandomData(10, 0.35, 0.1), color: '#2f7ed8' }, { name: 'v.xm', data: generateRandomData(10, 0.36, 0.1), color: '#9c9c9c' }]
+    });
+
+    // Actualizar gráfica diaria
+    function updateDailyChart(month) {
+        const dailyData = dailyDataByMonth[month];
+        Highcharts.chart('container-daily', {
+            chart: { type: 'line' },
+            title: { text: `VALOR CALCULADO VS VALOR XM - ${month.toUpperCase()} (Diario)` },
+            xAxis: { categories: Array.from({ length: dailyData.calculado.length }, (_, i) => i + 1), title: { text: 'DÍA DEL MES' } },
+            yAxis: { title: { text: 'TOTAL GARANTÍA DEL AGENTE' }, labels: { format: '{value} bill.' } },
+            series: [{ name: 'v.calculado', data: dailyData.calculado, color: '#2f7ed8' }, { name: 'v.xm', data: dailyData.xm, color: '#9c9c9c' }]
+        });
+    }
+
+    // Inicialización por defecto
+    updateDailyChart('enero');
+</script>
+
+</body>
+</html>

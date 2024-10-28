@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #header img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        #button-container {
+            width: 80%;
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+
+        .button {
+            background-color: #2f7ed8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #1c5cab;
+        }
+
+        /* Contenedor de gráficos y tablas */
+        #selector-container, #chart-container, #table-container {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        #selector-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #2f7ed8;
+            color: white;
+        }
+
+        .table .positive {
+            background-color: #b6f1a1;
+        }
+
+        .table .negative {
+            background-color: #f1a1a1;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container label {
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .input-container input {
+            font-size: 16px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <img src="logo-enersinc-min.png" alt="Enersinc Logo">
+</div>
+
+<div id="button-container">
+    <button class="button" onclick="window.location.href='main.html'">Atrás</button>
+</div>
+
+<div id="selector-container">
+    <div class="input-container">
+        <label for="fechalimite">Fecha límite:</label>
+        <input type="date" id="fechalimite" onchange="updateChartsAndTables()">
+    </div>
+</div>
+
+<div id="chart-container">
+    <div id="chart-valor-calculado" style="height: 300px; margin-top: 20px;"></div>
+</div>
+
+<div id="table-container">
+    <h2 style="text-align: center;">DIFERENCIAS POR CONCEPTO</h2>
+    <table class="table" id="table-diferencias">
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>v.calculado</th>
+                <th>v.xm</th>
+                <th>Diferencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas se generarán dinámicamente -->
+        </tbody>
+    </table>
+
+    <h2 style="text-align: center;">VARIABLES GARANTÍAS AGENTE</h2>
+    <table class="table" id="table-garantias">
+        <thead>
+            <tr>
+                <th>Fecha Inicial</th>
+                <th>Fecha Final</th>
+                <th>Concepto</th>
+                <th>Valor Esinc</th>
+                <th>Valor XM</th>
+                <th>Diferencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas se generarán dinámicamente -->
+        </tbody>
+    </table>
+
+    <h2 style="text-align: center;">VARIABLES TRANSACCIONES EN BOLSA</h2>
+    <table class="table" id="table-transacciones">
+        <thead>
+            <tr>
+                <th>Fecha Inicial</th>
+                <th>Fecha Final</th>
+                <th>Concepto</th>
+                <th>Valor Esinc</th>
+                <th>Valor XM</th>
+                <th>Diferencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas se generarán dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Función para generar datos aleatorios en el rango de miles de millones
+    function generateRandomValue(base, variance) {
+        return parseFloat((base + (Math.random() * variance - variance / 2)).toFixed(2));
+    }
+
+    // Actualizar gráficos y tablas
+    function updateChartsAndTables() {
+        const fechaLimite = document.getElementById("fechalimite").value || '2024-01-01';
+
+        // Actualizar gráfico de Valor Calculado vs Valor XM
+        Highcharts.chart('chart-valor-calculado', {
+            chart: { type: 'column' },
+            title: { text: 'VALOR CALCULADO VS VALOR XM' },
+            xAxis: { categories: ['v_gm_total', 'v_gm_total_ajuste'], title: { text: 'CONCEPTO' } },
+            yAxis: { title: { text: 'TOTAL GARANTÍA DEL AGENTE' } },
+            series: [
+                { name: 'v.calculado', data: [generateRandomValue(90000000000, 5000000000), generateRandomValue(30000000000, 2000000000)], color: '#2f7ed8' },
+                { name: 'v.xm', data: [generateRandomValue(85000000000, 5000000000), generateRandomValue(25000000000, 2000000000)], color: '#9c9c9c' }
+            ]
+        });
+
+        // Actualizar tabla de Diferencias por Concepto
+        const diferenciasTableBody = document.getElementById("table-diferencias").querySelector("tbody");
+        diferenciasTableBody.innerHTML = `
+            <tr>
+                <td>v_gm_total</td>
+                <td>${generateRandomValue(90000000000, 5000000000)}</td>
+                <td>${generateRandomValue(85000000000, 5000000000)}</td>
+                <td class="${generateRandomValue(5000000000, 1000000000) >= 0 ? 'positive' : 'negative'}">${generateRandomValue(5000000000, 1000000000)}</td>
+            </tr>
+            <tr>
+                <td>v_gm_total_ajuste</td>
+                <td>${generateRandomValue(30000000000, 2000000000)}</td>
+                <td>${generateRandomValue(25000000000, 2000000000)}</td>
+                <td class="${generateRandomValue(3000000000, 1000000000) >= 0 ? 'positive' : 'negative'}">${generateRandomValue(3000000000, 1000000000)}</td>
+            </tr>
+        `;
+
+        // Actualizar tabla de Variables Garantías Agente
+        const garantiasTableBody = document.getElementById("table-garantias").querySelector("tbody");
+        garantiasTableBody.innerHTML = `
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_base</td><td>${generateRandomValue(2700000000000, 200000000000)}</td><td>0</td><td class="negative">${-generateRandomValue(2700000000000, 200000000000)}</td></tr>
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_lc</td><td>${generateRandomValue(100000000000, 10000000000)}</td><td>0</td><td class="negative">${-generateRandomValue(100000000000, 10000000000)}</td></tr>
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_ser_cnd_asic</td><td>${generateRandomValue(105000000000, 10000000000)}</td><td>0</td><td class="negative">${-generateRandomValue(105000000000, 10000000000)}</td></tr>
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_uso_stn</td><td>${generateRandomValue(458000000000, 30000000000)}</td><td>0</td><td class="negative">${-generateRandomValue(458000000000, 30000000000)}</td></tr>
+        `;
+
+        // Actualizar tabla de Variables Transacciones en Bolsa
+        const transaccionesTableBody = document.getElementById("table-transacciones").querySelector("tbody");
+        transaccionesTableBody.innerHTML = `
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_desviacion</td><td>${generateRandomValue(-250000000000, 50000000000)}</td><td>${generateRandomValue(-250000000000, 50000000000)}</td><td class="${generateRandomValue(96000000000, 10000000000) >= 0 ? 'positive' : 'negative'}">${generateRandomValue(96000000000, 10000000000)}</td></tr>
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_exp_bolsa</td><td>${generateRandomValue(236000000000, 30000000000)}</td><td>0</td><td class="negative">${-generateRandomValue(236000000000, 30000000000)}</td></tr>
+            <tr><td>${fechaLimite}</td><td>${fechaLimite}</td><td>v_gm_restricciones</td><td>${generateRandomValue(489000000000, 40000000000)}</td><td>${generateRandomValue(490000000000, 30000000000)}</td><td class="positive">${generateRandomValue(16000000000, 5000000000)}</td></tr>
+        `;
+
+        // Inicializar DataTables para las tablas
+        $('#table-diferencias').DataTable();
+        $('#table-garantias').DataTable();
+        $('#table-transacciones').DataTable();
+    }
+
+    // Inicializar gráficos y tablas al cargar la página
+    $(document).ready(function () {
+        updateChartsAndTables();
+    });
+</script>
+
+</body>
+</html>
